@@ -1,0 +1,35 @@
+- defaults:
+    link:
+      relink: true
+      force: true
+
+# ~/.local が古い丸ごとsymlinkの場合は削除して選択的リンクに切り替える
+- shell:
+    - command: "[[ -L ~/.local ]] && rm ~/.local || true"
+      description: Remove legacy ~/.local symlink
+
+- create:
+    - ~/.local
+    - ~/.local/state/zsh
+    - ~/.claude
+
+- link:
+    ~/.config: files/.config
+    ~/.local/bin: files/.local/bin
+    ~/.local/share/zsh: files/.local/share/zsh
+    ~/.local/share/navi: files/.local/share/navi
+    ~/.zshrc: files/.config/zsh/.zshrc
+    ~/.zshenv: files/.config/zsh/.zshenv
+    ~/.bash_profile: files/.config/bash/.bash_profile
+    ~/.lnav: files/.config/.lnav
+    ~/.claude/skills: files/.config/.claude/skills
+    ~/.claude/hooks: files/.config/.claude/hooks
+    ~/.claude/settings.json: files/.config/.claude/settings.json
+
+- shell:
+    - command: echo 'export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"' > files/.config/zsh/.zshenv.local
+      description: Setup Starship config
+    - command: .bin/install-aqua.sh
+      description: Install aqua
+    - command: .bin/install-mise.sh
+      description: Install mise
