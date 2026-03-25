@@ -1,6 +1,18 @@
 # cspell:disable
 # yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/registry.json
 packages:
+  - type: github_release
+    repo_owner: ymp1pmy
+    repo_name: kioku
+    description: Memory/knowledge management MCP server
+    asset: "kioku-{{.OS}}-{{.Arch}}.{{.Format}}"
+    format: tar.gz
+    overrides:
+      - goos: windows
+        format: zip
+    files:
+      - name: kioku
+
   - type: github_archive
     repo_owner: mrowa44
     repo_name: emojify

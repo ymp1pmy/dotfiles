@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-KIOKU="${HOME}/.local/bin/kioku"
+KIOKU=$(command -v kioku 2>/dev/null || echo "${HOME}/.local/bin/kioku")
 if [[ ! -x "$KIOKU" ]]; then
   exit 0
 fi
