@@ -1,9 +1,5 @@
-[credential "https://github.com"]
-	helper = osxkeychain
-	helper = !gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = osxkeychain
-	helper = !gh auth git-credential
+[include]
+  path = ~/.config/git/credentials
 [core]
   editor = nvim
   quotepath = false

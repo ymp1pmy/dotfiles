@@ -18,6 +18,7 @@ files/.config/starship.toml
 files/.local/share/delta/**
 files/.local/share/fonts/**
 files/.config/git/profiles
+files/.config/git/credentials
 files/.config/wslu/**
 files/.config/.lnav/**
 files/.config/composer/**
