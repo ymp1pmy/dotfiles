@@ -10,6 +10,7 @@
 
 - create:
     - ~/.local
+    - ~/.local/share
     - ~/.local/state/zsh
     - ~/.claude
 
@@ -33,3 +34,5 @@
       description: Install aqua
     - command: .bin/install-mise.sh
       description: Install mise
+    - command: git update-index --skip-worktree files/.config/git/config
+      description: Skip worktree for git config (credential helpers are machine-specific)
