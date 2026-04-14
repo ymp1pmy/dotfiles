@@ -1,3 +1,3 @@
-if [ -x '/usr/bin/zsh' ]; then
+if [[ $- == *i* ]] && [ -x '/usr/bin/zsh' ]; then
   exec zsh
 fi
