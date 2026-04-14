@@ -22,6 +22,7 @@ path=(
   $HOME/.local/bin(N-/)
   $HOME/.local/share(N-/)
   $HOME/.cargo/bin(N-/)
+  ${GOPATH:-$HOME/go}/bin(N-/)
   $HOME/.local/share/zsh/site-functions(N-/)
   # Homebrew paths for macOS
   /opt/homebrew/bin(N-/)
