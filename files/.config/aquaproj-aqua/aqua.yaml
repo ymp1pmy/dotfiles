@@ -23,7 +23,7 @@ packages:
   - name: rossmacarthur/sheldon@0.8.1
     supported_envs:
       - darwin/arm64
-  - name: neovim/neovim@v0.10.3
+  - name: neovim/neovim@v0.10.4
   - name: stedolan/jq@jq-1.7.1
   - name: direnv/direnv@v2.35.0
   - name: BurntSushi/ripgrep@14.1.0
