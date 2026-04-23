@@ -1,4 +1,5 @@
 .DS_Store
+files/.config/go/**
 aqua-installer
 .bin/aqua-installer
 files/.local/state/**
