@@ -5,3 +5,4 @@ x-scheme-handler/http=file-protocol-handler.desktop
 x-scheme-handler/https=file-protocol-handler.desktop
 x-scheme-handler/about=file-protocol-handler.desktop
 x-scheme-handler/unknown=file-protocol-handler.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
