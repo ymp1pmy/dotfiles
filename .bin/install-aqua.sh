@@ -23,4 +23,4 @@ fi
 AQUA_DIR=${DOTFILES_AQUA_DIR:-$HOME/.config/aquaproj-aqua}
 export AQUA_POLICY_CONFIG=$AQUA_DIR/policy.yaml
 $HOME/.local/share/aquaproj-aqua/bin/aqua policy allow
-$HOME/.local/share/aquaproj-aqua/bin/aqua -c $AQUA_DIR/aqua.yaml i --only-link
+$HOME/.local/share/aquaproj-aqua/bin/aqua -c $AQUA_DIR/aqua.yaml i
