@@ -1,5 +1,30 @@
 {
+  "outputStyle": "EnglishCoach",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/tts-server-start.sh",
+            "timeout": 20,
+            "statusMessage": "Starting TTS server..."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/tts-server-stop.sh",
+            "timeout": 10,
+            "statusMessage": "Stopping TTS server..."
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -27,6 +52,13 @@
             "command": "bash ~/.claude/hooks/save-session-to-kioku.sh",
             "timeout": 120,
             "statusMessage": "会話をkiokuに保存中...",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/say-response.sh",
+            "timeout": 60,
+            "statusMessage": "Reading aloud...",
             "async": true
           }
         ]
