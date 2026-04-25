@@ -2,8 +2,14 @@
 set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Ensure ~/.config exists so aqua can find its config before symlinks are applied
-[ ! -e "$HOME/.config" ] && ln -s "$DIR/files/.config" "$HOME/.config"
+# Ensure aqua can find its config before symlinks are applied.
+# If ~/.config doesn't exist, symlink the whole dir.
+# If ~/.config is already a real directory (e.g. Codespaces), symlink just aquaproj-aqua.
+if [ ! -e "$HOME/.config" ]; then
+    ln -s "$DIR/files/.config" "$HOME/.config"
+elif [ ! -e "$HOME/.config/aquaproj-aqua" ]; then
+    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua"
+fi
 
 # 1. Install aqua and all registered tools (including Go)
 "$DIR/.bin/install-aqua.sh"
