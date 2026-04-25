@@ -9,7 +9,7 @@ if [ ! -e "$HOME/.config" ]; then
     ln -s "$DIR/files/.config" "$HOME/.config"
 elif [ ! -e "$HOME/.config/aquaproj-aqua" ]; then
     ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua" 2>/dev/null \
-        || export DOTFILES_AQUA_DIR="$DIR/files/.config/aquaproj-aqua"
+        || export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua/aqua.yaml"
 fi
 
 # 1. Install aqua and all registered tools (including Go)
