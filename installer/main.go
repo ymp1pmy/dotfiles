@@ -29,6 +29,7 @@ func main() {
 	logf("dotfiles install  os=%s  arch=%s", runtime.GOOS, runtime.GOARCH)
 
 	removeLegacyLocalSymlink()
+	ensureConfigWritable()
 	installPackages()
 
 	cfg, err := parseConfig(absConfig)
@@ -60,6 +61,25 @@ func removeLegacyLocalSymlink() {
 	if err := os.Remove(p); err != nil {
 		warnf("remove ~/.local: %v", err)
 	}
+}
+
+// ensureConfigWritable fixes ~/.config ownership when it's root-owned (common
+// in devcontainer setups that pre-create the dir before user provisioning runs).
+func ensureConfigWritable() {
+	if runtime.GOOS != "linux" {
+		return
+	}
+	home, _ := os.UserHomeDir()
+	configDir := filepath.Join(home, ".config")
+	testFile := filepath.Join(configDir, ".write-test")
+	f, err := os.Create(testFile)
+	if err == nil {
+		f.Close()
+		os.Remove(testFile)
+		return
+	}
+	logf("~/.config not writable — fixing ownership with sudo...")
+	mustRun("sudo", "chown", fmt.Sprintf("%d", os.Getuid()), configDir)
 }
 
 // ── OS/arch package installation ───────────────────────────────────────────
