@@ -37,6 +37,7 @@ func main() {
 		die("parse config: %v", err)
 	}
 	execute(cfg, dotfilesDir)
+	linkConfigSubdirs(dotfilesDir)
 
 	writeStarshipLocalEnv(dotfilesDir)
 	installMise()
@@ -483,6 +484,44 @@ func setupWSL(dotfilesDir string) {
 		return
 	}
 	logf("copied .wezterm.lua → %s", dst)
+}
+
+// linkConfigSubdirs is a fallback for environments where ~/.config can't be
+// replaced wholesale (e.g. Codespaces where ~/.config/gh is a Docker bind mount).
+// If ~/.config is already correctly symlinked, this is a no-op.
+// Otherwise it links each entry in files/.config/ individually, skipping
+// entries that already exist.
+func linkConfigSubdirs(dotfilesDir string) {
+	home, _ := os.UserHomeDir()
+	configTarget := filepath.Join(home, ".config")
+	configSrc := filepath.Join(dotfilesDir, "files/.config")
+
+	// Already correctly linked — nothing to do.
+	if link, err := os.Readlink(configTarget); err == nil && link == configSrc {
+		return
+	}
+
+	// Not a symlink (real dir) — link individual entries.
+	if info, err := os.Lstat(configTarget); err != nil || info.Mode()&os.ModeSymlink != 0 {
+		return
+	}
+
+	entries, err := os.ReadDir(configSrc)
+	if err != nil {
+		warnf("read %s: %v", configSrc, err)
+		return
+	}
+	for _, e := range entries {
+		dst := filepath.Join(configTarget, e.Name())
+		if _, err := os.Lstat(dst); err == nil {
+			continue // already exists, skip
+		}
+		src := filepath.Join(configSrc, e.Name())
+		logf("link    %s -> %s", dst, src)
+		if err := os.Symlink(src, dst); err != nil {
+			warnf("  %v", err)
+		}
+	}
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
