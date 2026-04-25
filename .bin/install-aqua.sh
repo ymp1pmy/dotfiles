@@ -18,7 +18,9 @@ if [[ ! -x "$HOME/.local/share/aquaproj-aqua/bin/aqua" ]]; then
   rm -f aqua-installer
 fi
 
-AQUA_CONFIG=${AQUA_CONFIG:-$HOME/.config/aquaproj-aqua}
-export AQUA_POLICY_CONFIG=$AQUA_CONFIG/policy.yaml
+# Use DOTFILES_AQUA_DIR if set (fallback when ~/.config is unwritable), else default location.
+# Never use AQUA_CONFIG directly — aqua treats it as a config *file* path, not a directory.
+AQUA_DIR=${DOTFILES_AQUA_DIR:-$HOME/.config/aquaproj-aqua}
+export AQUA_POLICY_CONFIG=$AQUA_DIR/policy.yaml
 $HOME/.local/share/aquaproj-aqua/bin/aqua policy allow
-$HOME/.local/share/aquaproj-aqua/bin/aqua -c $AQUA_CONFIG/aqua.yaml i --only-link
+$HOME/.local/share/aquaproj-aqua/bin/aqua -c $AQUA_DIR/aqua.yaml i --only-link
