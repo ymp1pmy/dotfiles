@@ -330,6 +330,10 @@ func makeLink(target, src string, relink, force bool) error {
 	if err == nil {
 		if info.Mode()&os.ModeSymlink != 0 {
 			existing, _ := os.Readlink(target)
+			// Normalize relative symlinks to absolute before comparing.
+			if !filepath.IsAbs(existing) {
+				existing = filepath.Join(filepath.Dir(target), existing)
+			}
 			if existing == src {
 				return nil // already correct
 			}
@@ -349,7 +353,13 @@ func makeLink(target, src string, relink, force bool) error {
 	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 		return err
 	}
-	return os.Symlink(src, target)
+	// Use a relative symlink so the same link works across environments
+	// with different home directory paths (e.g. /Users/w5000 vs /home/appuser).
+	relSrc, err := filepath.Rel(filepath.Dir(target), src)
+	if err != nil {
+		relSrc = src
+	}
+	return os.Symlink(relSrc, target)
 }
 
 // ── post-install setup ─────────────────────────────────────────────────────
