@@ -3,14 +3,12 @@ set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Ensure aqua can find its config before symlinks are applied.
-# 1. ~/.config doesn't exist → symlink the whole dir
-# 2. ~/.config is a real dir → try to symlink just aquaproj-aqua
-# 3. That also fails (permission denied) → fall back to AQUA_CONFIG env override
+# If ~/.config doesn't exist, symlink the whole dir.
+# If ~/.config is already a real directory (e.g. Codespaces), symlink just aquaproj-aqua.
 if [ ! -e "$HOME/.config" ]; then
     ln -s "$DIR/files/.config" "$HOME/.config"
 elif [ ! -e "$HOME/.config/aquaproj-aqua" ]; then
-    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua" 2>/dev/null \
-        || export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua"
+    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua"
 fi
 
 # 1. Install aqua and all registered tools (including Go)
