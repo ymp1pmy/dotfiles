@@ -22,6 +22,8 @@ fi
 # May be pre-set by install script when ~/.config/aquaproj-aqua couldn't be symlinked.
 AQUA_CONFIG=${AQUA_CONFIG:-$HOME/.config/aquaproj-aqua/aqua.yaml}
 export AQUA_CONFIG
-export AQUA_POLICY_CONFIG="$(dirname "$AQUA_CONFIG")/policy.yaml"
-$HOME/.local/share/aquaproj-aqua/bin/aqua policy allow
+AQUA_POLICY_CONFIG="$(dirname "$AQUA_CONFIG")/policy.yaml"
+export AQUA_POLICY_CONFIG
+# Pass policy file explicitly — env-var-only form silently ignores it in some envs
+$HOME/.local/share/aquaproj-aqua/bin/aqua policy allow "$AQUA_POLICY_CONFIG"
 $HOME/.local/share/aquaproj-aqua/bin/aqua -c "$AQUA_CONFIG" i
