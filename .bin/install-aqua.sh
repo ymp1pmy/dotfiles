@@ -18,7 +18,7 @@ if [[ ! -x "$HOME/.local/share/aquaproj-aqua/bin/aqua" ]]; then
   rm -f aqua-installer
 fi
 
-AQUA_CONFIG=$HOME/.config/aquaproj-aqua
+AQUA_CONFIG=${AQUA_CONFIG:-$HOME/.config/aquaproj-aqua}
 export AQUA_POLICY_CONFIG=$AQUA_CONFIG/policy.yaml
 $HOME/.local/share/aquaproj-aqua/bin/aqua policy allow
 $HOME/.local/share/aquaproj-aqua/bin/aqua -c $AQUA_CONFIG/aqua.yaml i --only-link
