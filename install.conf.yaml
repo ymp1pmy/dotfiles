@@ -25,6 +25,7 @@
     ~/.lnav: files/.config/.lnav
     ~/.claude/skills: files/.config/.claude/skills
     ~/.claude/hooks: files/.config/.claude/hooks
+    ~/.claude/output-styles: files/.config/.claude/output-styles
     ~/.claude/settings.json: files/.config/.claude/settings.json
 
 - shell:
