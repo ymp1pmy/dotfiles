@@ -16,8 +16,14 @@ fi
 "$DIR/.bin/install-aqua.sh"
 
 # 2. Make aqua-managed tools available for this session
-export PATH="$HOME/.local/share/aquaproj-aqua/bin:$PATH"
+AQUA_BIN="$HOME/.local/share/aquaproj-aqua/bin"
+export PATH="$AQUA_BIN:$PATH"
 
 # 3. Apply dotfiles
+# Use the actual Go binary via GOROOT to avoid aqua-proxy issues in sh context
+# (GOROOT single-arg lookup works via proxy; full go run does not in sh scripts)
+GOROOT=$("$AQUA_BIN/go" env GOROOT 2>/dev/null)
+GO_BIN="${GOROOT:+$GOROOT/bin/go}"
+GO_BIN="${GO_BIN:-go}"
 cd "$DIR/installer"
-go run . -c "$DIR/install.conf.yaml"
+"$GO_BIN" run . -c "$DIR/install.conf.yaml"
