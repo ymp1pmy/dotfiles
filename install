@@ -8,7 +8,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 if [ ! -e "$HOME/.config" ]; then
     ln -s "$DIR/files/.config" "$HOME/.config"
 elif [ ! -e "$HOME/.config/aquaproj-aqua" ]; then
-    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua"
+    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua" 2>/dev/null \
+        || export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua"
 fi
 
 # 1. Install aqua and all registered tools (including Go)
