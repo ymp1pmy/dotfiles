@@ -333,11 +333,28 @@ func makeLink(target, src string, relink, force bool) error {
 
 // ── post-install setup ─────────────────────────────────────────────────────
 
-// writeStarshipLocalEnv writes the machine-local starship config path override.
-// This file is gitignored so it won't be overwritten on pull.
+// writeStarshipLocalEnv writes machine-local env overrides to .zshenv.local.
+// This file is sourced at the end of .zshenv so it takes precedence.
 func writeStarshipLocalEnv(dotfilesDir string) {
 	p := filepath.Join(dotfilesDir, "files/.config/zsh/.zshenv.local")
-	content := `export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"` + "\n"
+
+	lines := []string{
+		`export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"`,
+	}
+
+	// When ~/.config/aquaproj-aqua can't be symlinked (e.g. restricted Codespaces env),
+	// .zshenv sets AQUA_GLOBAL_CONFIG/AQUA_POLICY_CONFIG to a non-existent path.
+	// Override them here so aqua proxy works in every shell session.
+	home, _ := os.UserHomeDir()
+	if _, err := os.Stat(filepath.Join(home, ".config/aquaproj-aqua")); err != nil {
+		aquaDir := filepath.Join(dotfilesDir, "files/.config/aquaproj-aqua")
+		lines = append(lines,
+			fmt.Sprintf("export AQUA_GLOBAL_CONFIG=%q", filepath.Join(aquaDir, "aqua.yaml")),
+			fmt.Sprintf("export AQUA_POLICY_CONFIG=%q", filepath.Join(aquaDir, "policy.yaml")),
+		)
+	}
+
+	content := strings.Join(lines, "\n") + "\n"
 	logf("write  %s", p)
 	if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
 		warnf("write starship env: %v", err)
