@@ -39,3 +39,4 @@ files/.local/share/karabiner/pid/**
 files/.local/share/karabiner/log/**
 files/.local/bin/claude
 files/.local/share/claude/versions/**
+bin/install-*

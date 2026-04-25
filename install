@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Ensure ~/.config exists so aqua can find its config before symlinks are applied
+[ ! -e "$HOME/.config" ] && ln -s "$DIR/files/.config" "$HOME/.config"
+
+# 1. Install aqua and all registered tools (including Go)
+"$DIR/.bin/install-aqua.sh"
+
+# 2. Make aqua-managed tools available for this session
+export PATH="$HOME/.local/share/aquaproj-aqua/bin:$PATH"
+
+# 3. Apply dotfiles
+cd "$DIR"
+go run ./installer
