@@ -43,5 +43,7 @@ cdpath=(
   $cdpath
 )
 
-[[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]] && source "$XDG_CONFIG_HOME/zsh/.zshenv.local"
+# Try XDG path first (normal: ~/.config is symlinked), fall back to DOTDIR (Codespaces: ~/.config unwritable)
+[[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]] && source "$XDG_CONFIG_HOME/zsh/.zshenv.local" \
+  || [[ -f "$DOTDIR/files/.config/zsh/.zshenv.local" ]] && source "$DOTDIR/files/.config/zsh/.zshenv.local"
 [[ -e "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
