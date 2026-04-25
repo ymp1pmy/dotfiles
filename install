@@ -19,5 +19,5 @@ fi
 export PATH="$HOME/.local/share/aquaproj-aqua/bin:$PATH"
 
 # 3. Apply dotfiles
-cd "$DIR"
-go run ./installer
+cd "$DIR/installer"
+go run . -c "$DIR/install.conf.yaml"
