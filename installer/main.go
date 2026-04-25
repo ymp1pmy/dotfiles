@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -27,6 +28,7 @@ func main() {
 
 	logf("dotfiles install  os=%s  arch=%s", runtime.GOOS, runtime.GOARCH)
 
+	removeLegacyLocalSymlink()
 	installPackages()
 
 	cfg, err := parseConfig(absConfig)
@@ -35,8 +37,29 @@ func main() {
 	}
 	execute(cfg, dotfilesDir)
 
-	showDaemonInstructions()
+	writeStarshipLocalEnv(dotfilesDir)
+	installMise()
+	gitSkipWorktree(dotfilesDir)
+	setupWSL(dotfilesDir)
+
 	logf("Done.")
+}
+
+// ── pre-install cleanup ────────────────────────────────────────────────────
+
+// removeLegacyLocalSymlink removes ~/.local if it's a legacy symlink so we
+// can replace it with selective per-directory symlinks.
+func removeLegacyLocalSymlink() {
+	home, _ := os.UserHomeDir()
+	p := filepath.Join(home, ".local")
+	info, err := os.Lstat(p)
+	if err != nil || info.Mode()&os.ModeSymlink == 0 {
+		return
+	}
+	logf("removing legacy ~/.local symlink")
+	if err := os.Remove(p); err != nil {
+		warnf("remove ~/.local: %v", err)
+	}
 }
 
 // ── OS/arch package installation ───────────────────────────────────────────
@@ -53,7 +76,7 @@ func installPackages() {
 }
 
 func installDarwin() {
-	logf("Installing macOS packages...")
+	logf("installing macOS packages...")
 	brew := brewPath()
 	if brew == "" {
 		if isTTY() {
@@ -95,7 +118,7 @@ func brewPath() string {
 }
 
 func installLinux() {
-	logf("Installing Linux packages...")
+	logf("installing Linux packages...")
 	mustRun("sudo", "apt-get", "update")
 	mustRun("sudo", "apt-get", "install", "-y",
 		"zsh", "build-essential", "unzip", "xdg-utils")
@@ -308,18 +331,121 @@ func makeLink(target, src string, relink, force bool) error {
 	return os.Symlink(src, target)
 }
 
-// ── post-install ───────────────────────────────────────────────────────────
+// ── post-install setup ─────────────────────────────────────────────────────
 
-func showDaemonInstructions() {
-	fmt.Println("=== Daemon Start Instructions ===")
-	switch runtime.GOOS {
-	case "darwin":
-		fmt.Println("launchctl load ~/Library/LaunchAgents/com.user.browserpipe.plist")
-	case "linux":
-		fmt.Println("systemctl --user enable BrowserPipe")
-		fmt.Println("systemctl --user start BrowserPipe")
+// writeStarshipLocalEnv writes the machine-local starship config path override.
+// This file is gitignored so it won't be overwritten on pull.
+func writeStarshipLocalEnv(dotfilesDir string) {
+	p := filepath.Join(dotfilesDir, "files/.config/zsh/.zshenv.local")
+	content := `export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"` + "\n"
+	logf("write  %s", p)
+	if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
+		warnf("write starship env: %v", err)
 	}
-	fmt.Println("=================================")
+}
+
+// installMise installs mise via the official installer script, then runs
+// `mise install` to provision all tool versions declared in config.
+func installMise() {
+	home, _ := os.UserHomeDir()
+	miseBin := filepath.Join(home, ".local/bin/mise")
+	if _, err := os.Stat(miseBin); os.IsNotExist(err) {
+		logf("installing mise...")
+		c := exec.Command("bash", "-c", "curl https://mise.run | sh")
+		c.Stdout = os.Stdout
+		c.Stderr = os.Stderr
+		if err := c.Run(); err != nil {
+			warnf("install mise: %v", err)
+			return
+		}
+	}
+	logf("mise install")
+	c := exec.Command(miseBin, "install")
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+	if err := c.Run(); err != nil {
+		warnf("mise install: %v", err)
+	}
+}
+
+// gitSkipWorktree marks the machine-specific git config so local credential
+// helper edits are never accidentally staged.
+func gitSkipWorktree(dotfilesDir string) {
+	logf("git skip-worktree files/.config/git/config")
+	c := exec.Command("git", "update-index", "--skip-worktree", "files/.config/git/config")
+	c.Dir = dotfilesDir
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+	if err := c.Run(); err != nil {
+		warnf("git update-index: %v", err)
+	}
+}
+
+// setupWSL copies .wezterm.lua to a Windows user directory when running in WSL.
+// Skips silently on non-Linux or non-WSL systems.
+func setupWSL(dotfilesDir string) {
+	if runtime.GOOS != "linux" {
+		return
+	}
+	windowsUsers := "/mnt/c/Users"
+	if _, err := os.Stat(windowsUsers); err != nil {
+		return
+	}
+
+	src := filepath.Join(dotfilesDir, "files/.config/wezterm/.wezterm.lua")
+	if _, err := os.Stat(src); err != nil {
+		warnf("wezterm config not found: %s", src)
+		return
+	}
+
+	entries, err := os.ReadDir(windowsUsers)
+	if err != nil {
+		warnf("read Windows users: %v", err)
+		return
+	}
+	var users []string
+	for _, e := range entries {
+		name := e.Name()
+		if e.IsDir() && name != "Public" && name != "Default" && !strings.HasPrefix(name, ".") {
+			users = append(users, name)
+		}
+	}
+	if len(users) == 0 {
+		warnf("no Windows users found in %s", windowsUsers)
+		return
+	}
+
+	if !isTTY() {
+		warnf("WSL detected but not interactive — skipping wezterm setup")
+		return
+	}
+
+	fmt.Println("WSL detected. Copy .wezterm.lua to a Windows user directory.")
+	for i, u := range users {
+		fmt.Printf("  %d: %s\n", i+1, u)
+	}
+	fmt.Print("Enter number (0 to skip): ")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	var choice int
+	fmt.Sscan(scanner.Text(), &choice)
+	if choice <= 0 || choice > len(users) {
+		logf("skipping wezterm setup")
+		return
+	}
+
+	dst := filepath.Join(windowsUsers, users[choice-1], ".wezterm.lua")
+	data, err := os.ReadFile(src)
+	if err != nil {
+		warnf("read wezterm config: %v", err)
+		return
+	}
+	if err := os.WriteFile(dst, data, 0o644); err != nil {
+		warnf("write wezterm config to %s: %v", dst, err)
+		return
+	}
+	logf("copied .wezterm.lua → %s", dst)
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────

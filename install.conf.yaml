@@ -3,11 +3,6 @@
       relink: true
       force: true
 
-# ~/.local が古い丸ごとsymlinkの場合は削除して選択的リンクに切り替える
-- shell:
-    - command: "[[ -L ~/.local ]] && rm ~/.local || true"
-      description: Remove legacy ~/.local symlink
-
 - create:
     - ~/.local
     - ~/.local/share
@@ -27,13 +22,3 @@
     ~/.claude/hooks: files/.config/.claude/hooks
     ~/.claude/output-styles: files/.config/.claude/output-styles
     ~/.claude/settings.json: files/.config/.claude/settings.json
-
-- shell:
-    - command: echo 'export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"' > files/.config/zsh/.zshenv.local
-      description: Setup Starship config
-    - command: .bin/install-aqua.sh
-      description: Install aqua
-    - command: .bin/install-mise.sh
-      description: Install mise
-    - command: git update-index --skip-worktree files/.config/git/config
-      description: Skip worktree for git config (credential helpers are machine-specific)
