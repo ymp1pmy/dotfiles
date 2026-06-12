@@ -39,7 +39,9 @@ for cfg in .prettierrc .prettierrc.js .prettierrc.cjs .prettierrc.json \
   [ -f "$PROJECT_ROOT/$cfg" ] && HAS_PRETTIER_CFG=true && break
 done
 # package.json に prettier キーがある場合も対象
-$HAS_PRETTIER_CFG || jq -e '.prettier' "$PROJECT_ROOT/package.json" > /dev/null 2>&1 && HAS_PRETTIER_CFG=true
+if ! $HAS_PRETTIER_CFG && jq -e '.prettier' "$PROJECT_ROOT/package.json" > /dev/null 2>&1; then
+  HAS_PRETTIER_CFG=true
+fi
 
 if $HAS_PRETTIER_CFG; then
   PRETTIER="$PROJECT_ROOT/node_modules/.bin/prettier"

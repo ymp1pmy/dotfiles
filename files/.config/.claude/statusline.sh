@@ -6,22 +6,22 @@ DIM=$'\033[2m'
 
 gradient() {
     local pct=$1
-    if awk "BEGIN{exit !($pct < 50)}"; then
+    if awk -v p="$pct" 'BEGIN{exit !(p < 50)}'; then
         local r
-        r=$(awk "BEGIN{printf \"%d\", $pct * 5.1}")
+        r=$(awk -v p="$pct" 'BEGIN{printf "%d", p * 5.1}')
         printf '\033[38;2;%d;200;80m' "$r"
     else
         local g
-        g=$(awk "BEGIN{v=200-($pct-50)*4; if(v<0)v=0; printf \"%d\", v}")
+        g=$(awk -v p="$pct" 'BEGIN{v=200-(p-50)*4; if(v<0)v=0; printf "%d", v}')
         printf '\033[38;2;255;%d;60m' "$g"
     fi
 }
 
 bar() {
     local pct width=10 full frac rest b=""
-    pct=$(awk "BEGIN{p=$1; if(p<0)p=0; if(p>100)p=100; print p}")
-    full=$(awk "BEGIN{printf \"%d\", int($pct * $width / 100)}")
-    frac=$(awk "BEGIN{f=$pct*$width/100; printf \"%d\", int((f-int(f))*8)}")
+    pct=$(awk -v p="$1" 'BEGIN{if(p<0)p=0; if(p>100)p=100; print p}')
+    full=$(awk -v p="$pct" -v w="$width" 'BEGIN{printf "%d", int(p * w / 100)}')
+    frac=$(awk -v p="$pct" -v w="$width" 'BEGIN{f=p*w/100; printf "%d", int((f-int(f))*8)}')
 
     for ((i=0; i<full; i++)); do b+='█'; done
 
@@ -35,7 +35,7 @@ bar() {
 
 fmt() {
     local label=$1 pct=$2 p
-    p=$(awk "BEGIN{printf \"%d\", int($pct + 0.5)}")
+    p=$(awk -v p="$pct" 'BEGIN{printf "%d", int(p + 0.5)}')
     printf '%s %s%s %d%%%s' "$label" "$(gradient "$pct")" "$(bar "$pct")" "$p" "$R"
 }
 

@@ -7,13 +7,17 @@ if [[ $# -lt 1 ]]; then
 fi
 
 if [[ $1 == "--help" || $1 == "-h" ]]; then
-  cargo init $1
+  cargo init "$1"
   exit 0
 fi
 
-pname=${@:$#:1}
-opts=${@:1:($#-1)}
+pname=${!#}
+# 最後の引数以外を cargo init に渡すオプションとして配列で保持
+# （文字列連結だと複数オプションが1引数に潰れる）
+opts=("${@:1:$#-1}")
 
 ghq create "$pname"
-cd $(ghq list -p | grep "$pname")
-cargo init "$opts"
+dir=$(ghq list -p | grep -m1 "$pname")
+cd "$dir"
+# ${opts[@]+...} は bash 3.2 (macOS) の set -u で空配列展開がエラーになるのを回避
+cargo init ${opts[@]+"${opts[@]}"}

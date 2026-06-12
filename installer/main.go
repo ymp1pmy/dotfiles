@@ -80,7 +80,7 @@ func ensureConfigWritable() {
 		return
 	}
 	logf("~/.config not writable — fixing ownership with sudo...")
-	mustRun("sudo", "chown", fmt.Sprintf("%d", os.Getuid()), configDir)
+	runOrWarn("sudo", "chown", fmt.Sprintf("%d", os.Getuid()), configDir)
 }
 
 // ── OS/arch package installation ───────────────────────────────────────────
@@ -115,7 +115,7 @@ func installDarwin() {
 		return
 	}
 	logf("brew: %s", brew)
-	mustRun(brew, "install", "zsh", "coreutils", "unzip", "openssl@3")
+	runOrWarn(brew, "install", "zsh", "coreutils", "unzip", "openssl@3")
 }
 
 // brewPath returns the arch-native Homebrew binary if present.
@@ -140,8 +140,8 @@ func brewPath() string {
 
 func installLinux() {
 	logf("installing Linux packages...")
-	mustRun("sudo", "apt-get", "update")
-	mustRun("sudo", "apt-get", "install", "-y",
+	runOrWarn("sudo", "apt-get", "update")
+	runOrWarn("sudo", "apt-get", "install", "-y",
 		"zsh", "build-essential", "unzip", "xdg-utils")
 	// best-effort: not all Linux envs have xdg-settings
 	run("xdg-settings", "set", "default-web-browser", "file-protocol-handler.desktop")
@@ -539,7 +539,7 @@ func linkConfigSubdirs(dotfilesDir string) {
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
-func mustRun(name string, args ...string) {
+func runOrWarn(name string, args ...string) {
 	if err := run(name, args...); err != nil {
 		warnf("%s: %v", name, err)
 	}

@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE.md)
-[![macOS](https://img.shields.io/badge/macOS-supported-brightgreen?logo=apple)](https://github.com/yamd1/dotfiles)
-[![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux&logoColor=white)](https://github.com/yamd1/dotfiles)
-[![WSL2](https://img.shields.io/badge/WSL2-supported-brightgreen?logo=windows&logoColor=white)](https://github.com/yamd1/dotfiles)
+[![macOS](https://img.shields.io/badge/macOS-supported-brightgreen?logo=apple)](https://github.com/ymp1pmy/dotfiles)
+[![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux&logoColor=white)](https://github.com/ymp1pmy/dotfiles)
+[![WSL2](https://img.shields.io/badge/WSL2-supported-brightgreen?logo=windows&logoColor=white)](https://github.com/ymp1pmy/dotfiles)
 
 # dotfiles
 
@@ -32,7 +32,7 @@
 ### macOS / Linux
 
 ```sh
-git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
+git clone https://github.com/ymp1pmy/dotfiles.git $HOME/dotfiles
 ./dotfiles/install
 ```
 
@@ -47,7 +47,7 @@ winget install wez.wezterm
 Then inside WSL:
 
 ```sh
-git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
+git clone https://github.com/ymp1pmy/dotfiles.git $HOME/dotfiles
 ./dotfiles/install
 ```
 
