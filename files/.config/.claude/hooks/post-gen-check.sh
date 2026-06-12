@@ -3,6 +3,11 @@
 # package.json に scripts が存在する場合のみ実行
 # エラー時のみ additionalContext で Claude に通知（トークン節約）
 
+# フックは Claude Code のパーミッション確認を通らずにプロジェクトの scripts を
+# 実行するため、信頼したプロジェクトで CLAUDE_AUTOCHECK=1 (direnv 等) を
+# 設定した場合のみ動かす
+[ "$CLAUDE_AUTOCHECK" != "1" ] && exit 0
+
 PROJECT_DIR="$(pwd)"
 
 # package.json がなければスキップ（非 Node プロジェクト）
@@ -17,7 +22,7 @@ if jq -e '.scripts.typecheck' "$PROJECT_DIR/package.json" > /dev/null 2>&1; then
     FAIL="[TypeScript errors]\n${TSC_OUT}"
   fi
 elif [ -f "$PROJECT_DIR/tsconfig.json" ]; then
-  TSC_OUT=$(npx tsc --noEmit 2>&1)
+  TSC_OUT=$(npx --no-install tsc --noEmit 2>&1)
   if [ $? -ne 0 ]; then
     FAIL="[TypeScript errors]\n${TSC_OUT}"
   fi

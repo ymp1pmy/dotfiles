@@ -1,9 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/aquaproj/aqua/main/json-schema/aqua-yaml.json
 # cspell: disable
 checksum:
-  enabled: true # リリース資産の改ざん検知を有効化
-  supported_envs: # Apple Silicon のみチェックサムを生成
-    - darwin/arm64
+  enabled: true # リリース資産の改ざん検知を全環境で有効化
 registries:
   - type: standard
     ref: v4.379.2 # renovate: depName=aquaproj/aqua-registry

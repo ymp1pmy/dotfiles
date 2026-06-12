@@ -10,12 +10,13 @@ fi
 
 # SEE: https://aquaproj.github.io/docs/products/aqua-installer#shell-script
 if [[ ! -x "$HOME/.local/share/aquaproj-aqua/bin/aqua" ]]; then
-  curl -sSfL -O https://raw.githubusercontent.com/aquaproj/aqua-installer/v3.1.1/aqua-installer
-  echo "e9d4c99577c6b2ce0b62edf61f089e9b9891af1708e88c6592907d2de66e3714  aqua-installer" | $SHA256_CMD -c -
-  chmod +x aqua-installer
-  ./aqua-installer -v v2.48.1
-  # Clean up installer file
-  rm -f aqua-installer
+  # カレントディレクトリ（実行場所依存）ではなく専用の一時ディレクトリに落とす
+  tmpdir=$(mktemp -d)
+  trap 'rm -rf "$tmpdir"' EXIT
+  curl -sSfL -o "$tmpdir/aqua-installer" https://raw.githubusercontent.com/aquaproj/aqua-installer/v3.1.1/aqua-installer
+  echo "e9d4c99577c6b2ce0b62edf61f089e9b9891af1708e88c6592907d2de66e3714  $tmpdir/aqua-installer" | $SHA256_CMD -c -
+  chmod +x "$tmpdir/aqua-installer"
+  "$tmpdir/aqua-installer" -v v2.48.1
 fi
 
 # AQUA_CONFIG points to the aqua.yaml file (aqua's own env var for proxy lookup).

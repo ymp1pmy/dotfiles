@@ -2,6 +2,10 @@
 # Claude Code PostToolUse hook: AI生成ファイルへの自動フォーマッター適用
 # Write/Edit 後に発火。biome > prettier > eslint の優先順で検出して実行。
 
+# プロジェクトの node_modules/.bin のバイナリをパーミッション確認なしで
+# 実行するため、信頼したプロジェクトで CLAUDE_AUTOCHECK=1 を設定した場合のみ動かす
+[ "$CLAUDE_AUTOCHECK" != "1" ] && exit 0
+
 FILE=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null)
 
 # ファイルパス取得失敗 or ファイル不在 → スキップ
@@ -35,7 +39,9 @@ for cfg in .prettierrc .prettierrc.js .prettierrc.cjs .prettierrc.json \
   [ -f "$PROJECT_ROOT/$cfg" ] && HAS_PRETTIER_CFG=true && break
 done
 # package.json に prettier キーがある場合も対象
-$HAS_PRETTIER_CFG || jq -e '.prettier' "$PROJECT_ROOT/package.json" > /dev/null 2>&1 && HAS_PRETTIER_CFG=true
+if ! $HAS_PRETTIER_CFG && jq -e '.prettier' "$PROJECT_ROOT/package.json" > /dev/null 2>&1; then
+  HAS_PRETTIER_CFG=true
+fi
 
 if $HAS_PRETTIER_CFG; then
   PRETTIER="$PROJECT_ROOT/node_modules/.bin/prettier"

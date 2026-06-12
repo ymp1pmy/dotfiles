@@ -20,7 +20,6 @@ path=(
   $AQUA_ROOT_DIR/bin(N-/)
   $HOME/.local/share/mise/shims(N-/)
   $HOME/.local/bin(N-/)
-  $HOME/.local/share(N-/)
   $HOME/.cargo/bin(N-/)
   ${GOPATH:-$HOME/go}/bin(N-/)
   $HOME/.local/share/zsh/site-functions(N-/)
@@ -44,6 +43,9 @@ cdpath=(
 )
 
 # Try XDG path first (normal: ~/.config is symlinked), fall back to DOTDIR (Codespaces: ~/.config unwritable)
-[[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]] && source "$XDG_CONFIG_HOME/zsh/.zshenv.local" \
-  || [[ -f "$DOTDIR/files/.config/zsh/.zshenv.local" ]] && source "$DOTDIR/files/.config/zsh/.zshenv.local"
+if [[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]]; then
+  source "$XDG_CONFIG_HOME/zsh/.zshenv.local"
+elif [[ -f "$DOTDIR/files/.config/zsh/.zshenv.local" ]]; then
+  source "$DOTDIR/files/.config/zsh/.zshenv.local"
+fi
 [[ -e "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

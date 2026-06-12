@@ -6,7 +6,6 @@ services:
       DISPLAY: $DISPLAY
       XDG_RUNTIME_DIR: /tmp
       GH_CONFIG_DIR: /home/appuser/.gh-config
-      GH_BROWSER: /home/appuser/.local/bin/open
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       ZHISTFILE: /home/appuser/.zsh/history
@@ -26,6 +25,3 @@ services:
       - type: bind
         source: ${HOME}/.aws
         target: /home/appuser/.aws
-      - type: bind
-        source: ${XDG_RUNTIME_DIR}/browser-pipe
-        target: /tmp/browser-pipe

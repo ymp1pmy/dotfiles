@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE.md)
-[![macOS](https://img.shields.io/badge/macOS-supported-brightgreen?logo=apple)](https://github.com/yamd1/dotfiles)
-[![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux&logoColor=white)](https://github.com/yamd1/dotfiles)
-[![WSL2](https://img.shields.io/badge/WSL2-supported-brightgreen?logo=windows&logoColor=white)](https://github.com/yamd1/dotfiles)
+[![macOS](https://img.shields.io/badge/macOS-supported-brightgreen?logo=apple)](https://github.com/ymp1pmy/dotfiles)
+[![Linux](https://img.shields.io/badge/Linux-supported-brightgreen?logo=linux&logoColor=white)](https://github.com/ymp1pmy/dotfiles)
+[![WSL2](https://img.shields.io/badge/WSL2-supported-brightgreen?logo=windows&logoColor=white)](https://github.com/ymp1pmy/dotfiles)
 
 # dotfiles
 
@@ -32,8 +32,8 @@
 ### macOS / Linux
 
 ```sh
-git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
-./dotfiles/install.sh
+git clone https://github.com/ymp1pmy/dotfiles.git $HOME/dotfiles
+./dotfiles/install
 ```
 
 ### Windows (WSL2)
@@ -47,9 +47,12 @@ winget install wez.wezterm
 Then inside WSL:
 
 ```sh
-git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
-./dotfiles/install.sh wsl
+git clone https://github.com/ymp1pmy/dotfiles.git $HOME/dotfiles
+./dotfiles/install
 ```
+
+WSL is auto-detected during install (via `/mnt/c/Users`) and you will be
+prompted to choose a Windows user directory for `.wezterm.lua`.
 
 ---
 
@@ -69,7 +72,7 @@ dotfiles/
 │   │   └── ...
 │   └── .local/           # XDG local (symlinked to ~/.local)
 ├── .bin/                 # Install scripts
-└── install.sh
+└── install
 ```
 
 ---

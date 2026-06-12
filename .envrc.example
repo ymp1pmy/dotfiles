@@ -1,1 +1,5 @@
 use gh user_name
+
+# 信頼できるプロジェクトでのみ Claude Code フックの自動実行
+# (typecheck/test/format) を有効化する
+export CLAUDE_AUTOCHECK=1
