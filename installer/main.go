@@ -399,7 +399,10 @@ func installMise() {
 	miseBin := filepath.Join(home, ".local/bin/mise")
 	if _, err := os.Stat(miseBin); os.IsNotExist(err) {
 		logf("installing mise...")
-		c := exec.Command("bash", "-c", "curl https://mise.run | sh")
+		// -f: don't pipe HTTP error pages into sh; --proto/--tlsv1.2: forbid
+		// protocol/TLS downgrade
+		c := exec.Command("bash", "-c",
+			"curl -fsSL --proto '=https' --tlsv1.2 https://mise.run | sh")
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
 		if err := c.Run(); err != nil {

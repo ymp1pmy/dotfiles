@@ -33,7 +33,7 @@
 
 ```sh
 git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
-./dotfiles/install.sh
+./dotfiles/install
 ```
 
 ### Windows (WSL2)
@@ -48,8 +48,11 @@ Then inside WSL:
 
 ```sh
 git clone https://github.com/yamd1/dotfiles.git $HOME/dotfiles
-./dotfiles/install.sh wsl
+./dotfiles/install
 ```
+
+WSL is auto-detected during install (via `/mnt/c/Users`) and you will be
+prompted to choose a Windows user directory for `.wezterm.lua`.
 
 ---
 
@@ -69,7 +72,7 @@ dotfiles/
 │   │   └── ...
 │   └── .local/           # XDG local (symlinked to ~/.local)
 ├── .bin/                 # Install scripts
-└── install.sh
+└── install
 ```
 
 ---

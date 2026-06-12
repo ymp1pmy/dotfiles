@@ -1,4 +1,3 @@
-[[ -f "$XDG_CONFIG_HOME/zsh/fzf.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/fzf.zsh"
 [[ -f "$XDG_CONFIG_HOME/zsh/.zshrc.local" ]] && source "$XDG_CONFIG_HOME/zsh/.zshrc.local"
 
 autoload -Uz add-zsh-hook
@@ -16,7 +15,6 @@ autoload -Uz gh-auth-switch-wrapped
 
 alias v="nvim"
 alias vim="nvim"
-alias devc="devcontainer up --workspace-folder . --dotfiles-repository ymp1pmy/dotfiles --dotfiles-install-command 'install.sh'"
 alias de="docker exec -it"
 alias ls=" eza -lago --icons"
 alias tmp='cd "$(mktemp -d)"'

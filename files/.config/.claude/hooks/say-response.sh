@@ -5,7 +5,9 @@ BIN="${SRC}/say-response"
 
 if [ -d "$SRC" ]; then
   if [ ! -f "$BIN" ] || [ "$SRC/main.go" -nt "$BIN" ]; then
-    go build -o "$BIN" "$SRC/" 2>/dev/null || exit 0
+    # ビルド失敗時は既存バイナリがあればそれで続行、なければ何もしない
+    go build -o "$BIN" "$SRC/" 2>/dev/null || true
   fi
-  exec "$BIN"
+  [ -x "$BIN" ] && exec "$BIN"
 fi
+exit 0

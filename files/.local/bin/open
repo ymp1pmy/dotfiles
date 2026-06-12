@@ -1,9 +1,0 @@
-#!/bin/bash
-set -ue
-
-BROWSER_PIPE="${XDG_RUNTIME_DIR}/browser-pipe"
-if [[ ! -e $BROWSER_PIPE ]]; then
-  mkfifo $BROWSER_PIPE
-fi
-
-echo "$1" >> "$BROWSER_PIPE"

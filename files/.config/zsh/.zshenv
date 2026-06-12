@@ -7,7 +7,6 @@ export AQUA_ROOT_DIR=$HOME/.local/share/aquaproj-aqua
 export AQUA_GLOBAL_CONFIG=$XDG_CONFIG_HOME/aquaproj-aqua/aqua.yaml
 export AQUA_POLICY_CONFIG=$XDG_CONFIG_HOME/aquaproj-aqua/policy.yaml
 export FZF_DEFAULT_OPTS="--reverse --cycle --ansi --no-info --no-scrollbar --no-hscroll --no-sort --no-mouse"
-export DEVC_COMPOSE_OVERRIDE=$XDG_CONFIG_HOME/devcontainer/compose.override.yml
 export EDITOR=nvim
 export GH_BROWSER=xdg-open
 export SHELL=/bin/zsh
@@ -20,7 +19,6 @@ path=(
   $AQUA_ROOT_DIR/bin(N-/)
   $HOME/.local/share/mise/shims(N-/)
   $HOME/.local/bin(N-/)
-  $HOME/.local/share(N-/)
   $HOME/.cargo/bin(N-/)
   ${GOPATH:-$HOME/go}/bin(N-/)
   $HOME/.local/share/zsh/site-functions(N-/)
@@ -44,6 +42,9 @@ cdpath=(
 )
 
 # Try XDG path first (normal: ~/.config is symlinked), fall back to DOTDIR (Codespaces: ~/.config unwritable)
-[[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]] && source "$XDG_CONFIG_HOME/zsh/.zshenv.local" \
-  || [[ -f "$DOTDIR/files/.config/zsh/.zshenv.local" ]] && source "$DOTDIR/files/.config/zsh/.zshenv.local"
+if [[ -f "$XDG_CONFIG_HOME/zsh/.zshenv.local" ]]; then
+  source "$XDG_CONFIG_HOME/zsh/.zshenv.local"
+elif [[ -f "$DOTDIR/files/.config/zsh/.zshenv.local" ]]; then
+  source "$DOTDIR/files/.config/zsh/.zshenv.local"
+fi
 [[ -e "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

@@ -2,6 +2,10 @@
 # Claude Code PostToolUse hook: AI生成ファイルへの自動フォーマッター適用
 # Write/Edit 後に発火。biome > prettier > eslint の優先順で検出して実行。
 
+# プロジェクトの node_modules/.bin のバイナリをパーミッション確認なしで
+# 実行するため、信頼したプロジェクトで CLAUDE_AUTOCHECK=1 を設定した場合のみ動かす
+[ "$CLAUDE_AUTOCHECK" != "1" ] && exit 0
+
 FILE=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null)
 
 # ファイルパス取得失敗 or ファイル不在 → スキップ
