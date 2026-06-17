@@ -5,11 +5,22 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 # Ensure aqua can find its config before symlinks are applied.
 # If ~/.config doesn't exist, symlink the whole dir.
 # If ~/.config is already a real directory (e.g. Codespaces), symlink just aquaproj-aqua.
+# Check for aqua.yaml itself (not just the directory) so a pre-existing real
+# aquaproj-aqua dir (e.g. left over from a failed prior attempt) still gets
+# routed to a working config instead of silently resolving to an empty dir.
+# If the target path already exists, skip ln -s entirely: `ln -s src dir`
+# nests the link inside an existing directory instead of replacing it, which
+# would succeed yet still leave aqua.yaml unreachable.
+AQUA_CFG_DIR="$HOME/.config/aquaproj-aqua"
 if [ ! -e "$HOME/.config" ]; then
     ln -s "$DIR/files/.config" "$HOME/.config"
-elif [ ! -e "$HOME/.config/aquaproj-aqua" ]; then
-    ln -s "$DIR/files/.config/aquaproj-aqua" "$HOME/.config/aquaproj-aqua" 2>/dev/null \
-        || export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua/aqua.yaml"
+elif [ ! -e "$AQUA_CFG_DIR/aqua.yaml" ]; then
+    if [ -e "$AQUA_CFG_DIR" ]; then
+        export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua/aqua.yaml"
+    else
+        ln -s "$DIR/files/.config/aquaproj-aqua" "$AQUA_CFG_DIR" 2>/dev/null \
+            || export AQUA_CONFIG="$DIR/files/.config/aquaproj-aqua/aqua.yaml"
+    fi
 fi
 
 # 1. Install aqua and all registered tools (including Go)
