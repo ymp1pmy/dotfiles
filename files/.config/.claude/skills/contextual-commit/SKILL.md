@@ -3,15 +3,17 @@ name: contextual-commit
 description: >-
   Write contextual commits that capture intent, decisions, and constraints
   alongside code changes. Use when committing code, finishing a task, or
-  when the user asks to commit. Extends Conventional Commits with structured
-  action lines in the commit body that preserve WHY code was written, not
-  just WHAT changed.
+  when the user asks to commit. In this repository, require a gitmoji prefix
+  together with a Conventional Commit subject and structured action lines in
+  the commit body so the message preserves WHY code was written, not just
+  WHAT changed.
 license: MIT
 ---
 
 # Contextual Commits
 
 You write commits that carry development reasoning in the body — the intent, decisions, constraints, and learnings that the diff alone cannot show.
+In this repository, every commit subject must start with a gitmoji and then follow Conventional Commits.
 
 ## The Problem You Solve
 
@@ -19,7 +21,9 @@ Standard commits preserve WHAT changed. The diff shows that too. What gets lost 
 
 ## Commit Format
 
-The subject line combines a gitmoji with a Conventional Commit. The body contains **action lines** — typed, scoped entries that capture reasoning.
+The subject line uses `gitmoji + Conventional Commit`. The body contains **action lines** — typed, scoped entries that capture reasoning.
+
+**IMPORTANT:** Always use gitmoji shortcode format (`:sparkles:`, `:bug:`, etc.), never raw emoji characters. Raw emoji may cause encoding issues in some terminals.
 
 ```
 :gitmoji: type(scope): subject line
@@ -30,32 +34,14 @@ action-type(scope): another entry
 
 ### Subject Line
 
-Prefix every subject line with a gitmoji in `:name:` format, followed by a Conventional Commit:
+Start with a gitmoji shortcode, then follow Conventional Commits exactly.
+Choose the gitmoji that best matches the change category.
 
 - `:sparkles: feat(auth): implement Google OAuth provider`
 - `:bug: fix(payments): handle currency rounding edge case`
 - `:recycle: refactor(notifications): extract digest scheduling logic`
 
-**Common gitmoji mappings:**
-
-| type | gitmoji |
-|------|---------|
-| feat | `:sparkles:` |
-| fix | `:bug:` |
-| refactor | `:recycle:` |
-| docs | `:memo:` |
-| test | `:white_check_mark:` |
-| chore | `:wrench:` |
-| perf | `:zap:` |
-| style | `:art:` |
-| ci | `:green_heart:` |
-| build | `:package:` |
-| revert | `:rewind:` |
-| remove | `:fire:` |
-| security | `:lock:` |
-| wip | `:construction:` |
-
-Always use `:name:` text format — never paste the actual emoji character.
+Never omit the gitmoji in this repository. Always use shortcode format.
 
 ### Action Lines
 
@@ -210,7 +196,7 @@ Contextual commits work with every standard git workflow. No special handling ne
 
 ## Rules
 
-1. **The subject line is a Conventional Commit.** Never break existing conventions or tooling.
+1. **The subject line starts with a gitmoji and then a Conventional Commit.** Never omit the gitmoji in this repository.
 2. **Action lines go in the body only.** Never in the subject line.
 3. **Only write action lines that carry signal.** If the diff already explains it, don't repeat it. If there was nothing to decide, reject, or discover, write no action lines.
 4. **Be concise but complete.** Each action line should be a single clear statement. No artificial length limits, but don't write essays either.
