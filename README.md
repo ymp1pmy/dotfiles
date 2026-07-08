@@ -16,6 +16,7 @@
 | Shell | [zsh](https://www.zsh.org/) + [sheldon](https://github.com/rossmacarthur/sheldon) |
 | Prompt | [Starship](https://starship.rs/) |
 | Terminal | [Ghostty](https://ghostty.org/) / [WezTerm](https://wezfurlong.org/wezterm/) |
+| Multiplexer | [tmux](https://github.com/tmux/tmux) + [tpm](https://github.com/tmux-plugins/tpm) |
 | Editor | [Neovim](https://neovim.io/) |
 | Git TUI | [lazygit](https://github.com/jesseduffield/lazygit) |
 | Files | [eza](https://github.com/eza-community/eza) + [fd](https://github.com/sharkdp/fd) |
