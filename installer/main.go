@@ -140,11 +140,28 @@ func brewPath() string {
 
 func installLinux() {
 	logf("installing Linux packages...")
-	runOrWarn("sudo", "apt-get", "update")
-	runOrWarn("sudo", "apt-get", "install", "-y",
-		"zsh", "build-essential", "unzip", "xdg-utils")
+	switch {
+	case commandExists("apt-get"):
+		runOrWarn("sudo", "apt-get", "update")
+		runOrWarn("sudo", "apt-get", "install", "-y",
+			"zsh", "build-essential", "unzip", "xdg-utils")
+	case commandExists("dnf"):
+		// Amazon Linux 2023 / Fedora / RHEL 9+.
+		// dnf aborts the whole transaction when any named package is missing,
+		// so keep xdg-utils (absent from some minimal repos) in its own call.
+		runOrWarn("sudo", "dnf", "install", "-y",
+			"zsh", "gcc", "gcc-c++", "make", "unzip")
+		runOrWarn("sudo", "dnf", "install", "-y", "xdg-utils")
+	default:
+		warnf("no supported package manager (apt-get/dnf) — skipping packages")
+	}
 	// best-effort: not all Linux envs have xdg-settings
 	run("xdg-settings", "set", "default-web-browser", "file-protocol-handler.desktop")
+}
+
+func commandExists(name string) bool {
+	_, err := exec.LookPath(name)
+	return err == nil
 }
 
 // ── YAML config parsing ────────────────────────────────────────────────────
