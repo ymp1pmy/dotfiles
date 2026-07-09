@@ -392,8 +392,12 @@ func makeLink(target, src string, relink, force bool) error {
 func writeStarshipLocalEnv(dotfilesDir string) {
 	p := filepath.Join(dotfilesDir, "files/.config/zsh/.zshenv.local")
 
+	// コンテナ判定を優先: EC2 上のコンテナでは「コンテナにいる」ことの方が重要
 	starship := "host_starship.toml"
-	if isRemoteMachine() {
+	switch {
+	case isContainer():
+		starship = "container_starship.toml"
+	case isRemoteMachine():
 		starship = "remote_starship.toml"
 	}
 	lines := []string{
@@ -417,6 +421,20 @@ func writeStarshipLocalEnv(dotfilesDir string) {
 	if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
 		warnf("write starship env: %v", err)
 	}
+}
+
+// isContainer reports whether the installer itself runs inside a container:
+// /.dockerenv for docker, /run/.containerenv for podman, the "container" env
+// var for systemd-nspawn/podman, and devcontainer/Codespaces markers.
+func isContainer() bool {
+	for _, f := range []string{"/.dockerenv", "/run/.containerenv"} {
+		if _, err := os.Stat(f); err == nil {
+			return true
+		}
+	}
+	return os.Getenv("container") != "" ||
+		os.Getenv("REMOTE_CONTAINERS") != "" ||
+		os.Getenv("CODESPACES") != ""
 }
 
 // isRemoteMachine reports whether this machine is accessed remotely rather
