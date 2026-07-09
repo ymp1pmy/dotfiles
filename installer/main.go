@@ -392,8 +392,12 @@ func makeLink(target, src string, relink, force bool) error {
 func writeStarshipLocalEnv(dotfilesDir string) {
 	p := filepath.Join(dotfilesDir, "files/.config/zsh/.zshenv.local")
 
+	starship := "host_starship.toml"
+	if isRemoteMachine() {
+		starship = "remote_starship.toml"
+	}
 	lines := []string{
-		`export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/host_starship.toml"`,
+		fmt.Sprintf(`export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/%s"`, starship),
 	}
 
 	// When ~/.config/aquaproj-aqua can't be symlinked (e.g. restricted Codespaces env),
@@ -413,6 +417,27 @@ func writeStarshipLocalEnv(dotfilesDir string) {
 	if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
 		warnf("write starship env: %v", err)
 	}
+}
+
+// isRemoteMachine reports whether this machine is accessed remotely rather
+// than sat at directly, so the prompt can make the location obvious.
+// SSH sets SSH_CONNECTION/SSH_TTY, but SSM sessions export no SSH_* variables,
+// so EC2 hardware is also detected via DMI (Nitro reports "Amazon EC2",
+// Xen-era instances embed "amazon" in the BIOS version).
+func isRemoteMachine() bool {
+	if os.Getenv("SSH_CONNECTION") != "" || os.Getenv("SSH_TTY") != "" {
+		return true
+	}
+	for _, f := range []string{
+		"/sys/devices/virtual/dmi/id/sys_vendor",
+		"/sys/devices/virtual/dmi/id/bios_version",
+	} {
+		if b, err := os.ReadFile(f); err == nil &&
+			strings.Contains(strings.ToLower(string(b)), "amazon") {
+			return true
+		}
+	}
+	return false
 }
 
 // installMise installs mise via the official installer script, then runs

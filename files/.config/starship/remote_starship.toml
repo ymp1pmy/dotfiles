@@ -1,3 +1,13 @@
+# どのマシンにいるか一目でわかるよう user@hostname を常時表示する。
+# starship 標準の ssh_only は SSH_CONNECTION を見るため、SSM セッションでは効かない。
+[username]
+show_always = true
+format = '[$user](bold yellow)@'
+
+[hostname]
+ssh_only = false
+format = '[$hostname](bold yellow) in '
+
 [custom.gh_active_user]
 command = '[[ -e "$HOME/.local/state/gh/active-user" ]] && cat $HOME/.local/state/gh/active-user || echo no-user'
 style = "bg:#394260"
