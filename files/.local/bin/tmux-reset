@@ -1,0 +1,28 @@
+#!/bin/bash
+set -ue
+
+# tmux を「完全に」終了する。
+# 素の kill-server では tmux-continuum の保存データが残るため、
+# 次回起動時に @continuum-restore が古いセッションを自動復元して蘇ってしまう。
+# server を止めたうえで自動復元の起点 (last symlink) を消し、
+# 次回はまっさらな状態で起動できるようにする。
+
+# tmux.conf の @resurrect-dir と同じパスを参照する
+resurrect_dir="${XDG_DATA_HOME:-$HOME/.local/share}/tmux/resurrect"
+
+tmux kill-server 2>/dev/null || true
+
+# session-closed hook が shutdown 中に保存を走らせることがあるため、
+# server が完全に落ちてから last を消す
+for _ in $(seq 1 20); do
+  tmux has-session 2>/dev/null || break
+  sleep 0.1
+done
+sleep 0.3
+
+# last (最新スナップショットへの symlink) だけを消す。
+# 過去の保存ファイル自体は残るので、必要なら symlink を張り直して
+# prefix + C-r で手動復元できる。
+rm -f "$resurrect_dir/last"
+
+echo "tmux: server killed, saved sessions cleared"
