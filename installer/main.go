@@ -154,6 +154,10 @@ func installLinux() {
 		runOrWarn("sudo", "dnf", "install", "-y",
 			"zsh", "gcc", "gcc-c++", "make", "unzip", "gnupg2")
 		runOrWarn("sudo", "dnf", "install", "-y", "xdg-utils")
+		// AL2023 ships gnupg2-minimal by default, whose gpg lacks options like
+		// --trust-model and breaks mise's node tarball verification. Swap in the
+		// full build; fails harmlessly on Fedora/RHEL where gnupg2 is already full.
+		runOrWarn("sudo", "dnf", "install", "-y", "--allowerasing", "gnupg2-full")
 	default:
 		warnf("no supported package manager (apt-get/dnf) — skipping packages")
 	}
