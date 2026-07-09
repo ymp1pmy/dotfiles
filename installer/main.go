@@ -143,14 +143,16 @@ func installLinux() {
 	switch {
 	case commandExists("apt-get"):
 		runOrWarn("sudo", "apt-get", "update")
+		// gnupg: Ubuntu ships gpg without gpg-agent, which breaks mise's
+		// GPG verification of node tarballs on fresh WSL/minimal installs.
 		runOrWarn("sudo", "apt-get", "install", "-y",
-			"zsh", "build-essential", "unzip", "xdg-utils")
+			"zsh", "build-essential", "unzip", "xdg-utils", "gnupg")
 	case commandExists("dnf"):
 		// Amazon Linux 2023 / Fedora / RHEL 9+.
 		// dnf aborts the whole transaction when any named package is missing,
 		// so keep xdg-utils (absent from some minimal repos) in its own call.
 		runOrWarn("sudo", "dnf", "install", "-y",
-			"zsh", "gcc", "gcc-c++", "make", "unzip")
+			"zsh", "gcc", "gcc-c++", "make", "unzip", "gnupg2")
 		runOrWarn("sudo", "dnf", "install", "-y", "xdg-utils")
 	default:
 		warnf("no supported package manager (apt-get/dnf) — skipping packages")
