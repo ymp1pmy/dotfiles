@@ -1,0 +1,77 @@
+# コンテナ内専用プロンプト: 黄色ベース + ベージュの暖色グラデーション。
+# 先頭の  でコンテナにいることを一目で示す。
+format = """
+[░▒▓](#f9e2af)\
+[  ](fg:#3b3228 bg:#f9e2af)\
+[](fg:#f9e2af bg:#e6c384)\
+$directory\
+[](fg:#e6c384 bg:#a68a5b)\
+${custom.gh_active_user}\
+$git_branch\
+$git_status\
+[](fg:#a68a5b bg:#6e5a3a)\
+$nodejs\
+$rust\
+$golang\
+$php\
+[](fg:#6e5a3a bg:#473a26)\
+$time\
+[ ](fg:#473a26)\
+\n$character"""
+
+[directory]
+style = "fg:#3b3228 bg:#e6c384"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[custom.gh_active_user]
+command = '[[ -e "$HOME/.local/state/gh/active-user" ]] && cat $HOME/.local/state/gh/active-user || echo no-user'
+style = "bg:#a68a5b"
+when = true
+format = '[[ $output ](fg:#3b3228 bg:#a68a5b)]($style)'
+
+[git_branch]
+symbol = ""
+style = "bg:#a68a5b"
+format = '[[ $symbol $branch ](fg:#3b3228 bg:#a68a5b)]($style)'
+
+[git_status]
+style = "bg:#a68a5b"
+format = '[[($all_status$ahead_behind )](fg:#3b3228 bg:#a68a5b)]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:#6e5a3a"
+format = '[[ $symbol ($version) ](fg:#f9e2af bg:#6e5a3a)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:#6e5a3a"
+format = '[[ $symbol ($version) ](fg:#f9e2af bg:#6e5a3a)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:#6e5a3a"
+format = '[[ $symbol ($version) ](fg:#f9e2af bg:#6e5a3a)]($style)'
+
+[php]
+symbol = ""
+style = "bg:#6e5a3a"
+format = '[[ $symbol ($version) ](fg:#f9e2af bg:#6e5a3a)]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:#473a26"
+format = '[[ 󰥔 $time ](fg:#e6c384 bg:#473a26)]($style)'
+
+[character]
+success_symbol = '[❯](bold fg:#f9e2af)'
+error_symbol = '[❯](bold fg:#e78284)'
