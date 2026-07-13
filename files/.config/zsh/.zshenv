@@ -13,6 +13,8 @@ export GH_BROWSER=xdg-open
 export SHELL=/bin/zsh
 export DIRENV_WARN_TIMEOUT=100s
 export STARSHIP_CONFIG=${STARSHIP_CONFIG:-$XDG_CONFIG_HOME/starship/host_starship.toml}
+# host / container / remote (installer が .zshenv.local で上書き。tmux の配色切替にも使う)
+export DOTFILES_MACHINE=${DOTFILES_MACHINE:-host}
 
 path=(
   $HOME/bin(N-/)

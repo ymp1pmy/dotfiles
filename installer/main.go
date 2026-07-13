@@ -389,19 +389,21 @@ func makeLink(target, src string, relink, force bool) error {
 
 // writeStarshipLocalEnv writes machine-local env overrides to .zshenv.local.
 // This file is sourced at the end of .zshenv so it takes precedence.
+// DOTFILES_MACHINE is also consumed by tmux.conf to switch the color palette.
 func writeStarshipLocalEnv(dotfilesDir string) {
 	p := filepath.Join(dotfilesDir, "files/.config/zsh/.zshenv.local")
 
 	// コンテナ判定を優先: EC2 上のコンテナでは「コンテナにいる」ことの方が重要
-	starship := "host_starship.toml"
+	machine := "host"
 	switch {
 	case isContainer():
-		starship = "container_starship.toml"
+		machine = "container"
 	case isRemoteMachine():
-		starship = "remote_starship.toml"
+		machine = "remote"
 	}
 	lines := []string{
-		fmt.Sprintf(`export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/%s"`, starship),
+		fmt.Sprintf(`export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/%s_starship.toml"`, machine),
+		fmt.Sprintf("export DOTFILES_MACHINE=%s", machine),
 	}
 
 	// When ~/.config/aquaproj-aqua can't be symlinked (e.g. restricted Codespaces env),
