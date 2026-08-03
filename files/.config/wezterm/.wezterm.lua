@@ -111,7 +111,9 @@ config.line_height = 1.3
 -- SEE: https://wezfurlong.org/wezterm/config/lua/config/canonicalize_pasted_newlines.html
 config.canonicalize_pasted_newlines = "LineFeed"
 config.window_decorations = "RESIZE"
-config.initial_rows = 64
+-- 1920x1080 モニタで画面からはみ出さず快適に使えるサイズ。
+-- line_height 1.3 の分だけ 1 行が高いので、rows は控えめにしておく。
+config.initial_rows = 40
 config.initial_cols = 150
 config.window_padding = {
     left = "2cell",
