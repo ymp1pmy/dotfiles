@@ -7,6 +7,25 @@ for _, dom in ipairs(wsl_domains) do
     dom.default_cwd = "~"
 end
 
+-- 利用可能な WSL ディストリの中から使いたいものを優先順で選ぶ。
+-- 環境ごとに導入済みの Ubuntu バージョンが違っても動くよう、
+-- ベタ書きせず「あるものの中から」フォールバックする。
+local function pick_default_domain(domains, preferred)
+    local available = {}
+    for _, dom in ipairs(domains) do
+        available[dom.name] = true
+    end
+
+    for _, name in ipairs(preferred) do
+        if available[name] then
+            return name
+        end
+    end
+
+    -- 優先候補がどれも無ければ、先頭の WSL ドメインにフォールバック。
+    return domains[1] and domains[1].name or nil
+end
+
 local function split(str, ptr)
     local splitted = {}
     for token in string.gmatch(str, string.format("[^%s]+", ptr)) do
@@ -56,7 +75,10 @@ end)
 
 local config = {}
 
-config.default_domain = "WSL:Ubuntu-24.04"
+config.default_domain = pick_default_domain(wsl_domains, {
+    "WSL:Ubuntu-26.04",
+    "WSL:Ubuntu-24.04",
+})
 config.wsl_domains = wsl_domains
 
 config.color_scheme = "Kanagawa (Gogh)"
