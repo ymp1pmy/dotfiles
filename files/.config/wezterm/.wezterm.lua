@@ -73,6 +73,14 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     }
 end)
 
+-- ベル (BEL) を受け取ったら OS のトースト通知も出す。
+-- Claude Code のフックが「処理完了」「入力待ち」で BEL を撃ってくるので、
+-- 別ウィンドウを見ていても気づけるようにする。
+-- WSL 越し / tmux 越しでも BEL はそのまま伝わってくる。
+wezterm.on("bell", function(window, pane)
+    window:toast_notification("WezTerm", string.format("%s が呼んでいます", pane:get_title()), nil, 4000)
+end)
+
 local config = {}
 
 config.default_domain = pick_default_domain(wsl_domains, {
@@ -95,6 +103,9 @@ config.colors = {
 
     scrollbar_thumb = "#16161d",
     split = "#c8c093",
+
+    -- visual_bell のフラッシュ色 (Kanagawa の選択色に合わせる)
+    visual_bell = "#2d4f67",
 
     ansi = { "#090618", "#c34043", "#76946a", "#c0a36e", "#7e9cd8", "#957fb8", "#6a9589", "#c8c093" },
     brights = { "#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#dcd7ba" },
@@ -126,6 +137,17 @@ config.default_cursor_style = "BlinkingBlock"
 config.cursor_blink_rate = 500
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
+
+-- ベルは「音 + 画面フラッシュ + トースト通知」の三段構え。
+-- 端末側 (Claude Code のフックなど) が \a を吐けばここで拾う。
+config.audible_bell = "SystemBeep"
+config.visual_bell = {
+    fade_in_duration_ms = 75,
+    fade_in_function = "EaseIn",
+    fade_out_duration_ms = 150,
+    fade_out_function = "EaseOut",
+    target = "BackgroundColor",
+}
 
 config.inactive_pane_hsb = {
     saturation = 1.0,
