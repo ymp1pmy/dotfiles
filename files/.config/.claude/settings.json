@@ -21,6 +21,22 @@
             "command": "bash ~/.claude/hooks/post-gen-check.sh",
             "timeout": 120,
             "statusMessage": "型チェック・テスト実行中..."
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/bell.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/bell.sh",
+            "timeout": 5
           }
         ]
       }
